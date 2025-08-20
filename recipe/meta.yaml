@@ -13,9 +13,6 @@ build:
   number: 0
   skip: True  # [py<38]
   script:
-    # https://github.com/rust-lang/cargo/issues/10583#issuecomment-1129997984
-    - export CARGO_NET_GIT_FETCH_WITH_CLI=true   # [unix]
-    - set CARGO_NET_GIT_FETCH_WITH_CLI=true  # [win]
     # Optimize the Cargo build
     - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
     - export CARGO_PROFILE_RELEASE_LTO=fat  # [unix]
@@ -24,9 +21,6 @@ build:
     # Deal with OpenSSL vendoring
     - export OPENSSL_DIR="$PREFIX"  # [unix]
     - set OPENSSL_DIR=%LIBRARY_PREFIX%  # [win]
-    # Disabling installing rust by setup.py
-    - export MATURIN_NO_INSTALL_RUST=1  # [unix]
-    - set MATURIN_NO_INSTALL_RUST=1  # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
     # Generate the THIRDPARTY.yml file
     - cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml   # [unix]
@@ -34,12 +28,12 @@ build:
 
 requirements:
   build:
-    - openssl {{ openssl }}
     - {{ compiler('c') }}
     - {{ stdlib('c') }}
     - {{ compiler('rust') }}
     - cargo-bundle-licenses
     - pkg-config
+    - openssl {{ openssl }}
   host:
     - python
     - pip
