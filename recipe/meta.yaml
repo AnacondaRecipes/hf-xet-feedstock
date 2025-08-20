@@ -1,0 +1,79 @@
+{% set name = "hf-xet" %}
+{% set version = "1.1.8" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://pypi.org/packages/source/h/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+  sha256: 62a0043e441753bbc446dcb5a3fe40a4d03f5fb9f13589ef1df9ab19252beb53
+
+build:
+  number: 0
+  skip: True  # [py<38]
+  script:
+    # Optimize the Cargo build
+    - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
+    - export CARGO_PROFILE_RELEASE_LTO=fat  # [unix]
+    - set CARGO_PROFILE_RELEASE_STRIP=symbols  # [win]
+    - set CARGO_PROFILE_RELEASE_LTO=fat  # [win]
+    # Deal with OpenSSL vendoring
+    - export OPENSSL_DIR="$PREFIX"  # [unix]
+    - set OPENSSL_DIR=%LIBRARY_PREFIX%  # [win]
+    - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    # Generate the THIRDPARTY.yml file
+    - cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml  # [unix]
+    - cargo-bundle-licenses --format yaml --output %SRC_DIR%\THIRDPARTY.yml  # [win]
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ stdlib('c') }}
+    - {{ compiler('rust') }}
+    - cargo-bundle-licenses
+    - pkg-config
+    - openssl {{ openssl }}
+  host:
+    - python
+    - pip
+    - maturin >=1.7,<2.0
+  run:
+    - python
+
+test:
+  source_files:
+    - data
+  imports:
+    - hf_xet
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - test -f $SP_DIR/hf_xet/hf_xet.abi3.so  # [unix]
+    - if not exist %SP_DIR%\\hf_xet\\hf_xet.pyd exit 1  # [win]
+  requires:
+    - pip
+
+about:
+  home: https://github.com/huggingface/xet-core
+  summary: xet-core enables huggingface_hub to utilize xet storage for uploading and downloading to HF Hub.
+  description: 
+    xet-core enables huggingface_hub to utilize xet storage for uploading and
+    downloading to HF Hub. Xet storage provides chunk-based deduplication,
+    efficient storage/retrieval with local disk caching, and backwards
+    compatibility with Git LFS. This library is not meant to be used directly,
+    and is instead intended to be used from huggingface_hub.
+    hf_xet - Python integration with Rust code, uses maturin to build hfxet
+    Python package. Main integration with HF Hub Python package.
+  license: Apache-2.0
+  license_family: Apache
+  license_file: 
+    - LICENSE
+    - THIRDPARTY.yml
+  doc_url: https://github.com/huggingface/xet-core/blob/main/README.md
+  dev_url: https://github.com/huggingface/xet-core
+
+extra:
+  recipe-maintainers:
+    - shermansiu
+    - hadim
