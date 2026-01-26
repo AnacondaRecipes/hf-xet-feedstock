@@ -11,7 +11,7 @@ source:
 
 build:
   number: 0
-  skip: True  # [py<38]
+  skip: true  # [py<38]
   script:
     # Optimize the Cargo build
     - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
