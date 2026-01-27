@@ -8,6 +8,8 @@ package:
 source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
   sha256: a8c27070ca547293b6890c4bf389f713f80e8c478631432962bb7f4bc0bd7d7f
+  #patches:
+  #- remove_git_xet.patch
 
 build:
   number: 0
@@ -22,9 +24,10 @@ build:
     - export OPENSSL_DIR="$PREFIX"  # [unix]
     - set OPENSSL_DIR=%LIBRARY_PREFIX%  # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-    # Generate the THIRDPARTY.yml file
-    - cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml  # [unix]
-    - cargo-bundle-licenses --format yaml --output %SRC_DIR%\THIRDPARTY.yml  # [win]
+    # Generate the THIRDPARTY.yml file for hf_xet and it's dependencies (additional unused workspace members
+    # not included in the pypi tarball are present).
+    - cd hf_xet && cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml  # [unix]
+    - cd hf_xet && cargo-bundle-licenses --format yaml --output %SRC_DIR%\THIRDPARTY.yml  # [win]
 
 requirements:
   build:
@@ -68,7 +71,7 @@ about:
   license: Apache-2.0
   license_family: Apache
   license_file: 
-    - LICENSE
+    - hf_xet/LICENSE
     - THIRDPARTY.yml
   doc_url: https://github.com/huggingface/xet-core/blob/main/README.md
   dev_url: https://github.com/huggingface/xet-core
