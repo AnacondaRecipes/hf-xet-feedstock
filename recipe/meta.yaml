@@ -73,7 +73,7 @@ about:
   license_file: 
     - hf_xet/LICENSE
     - THIRDPARTY.yml
-  doc_url: https://github.com/huggingface/xet-core/blob/main/README.md
+  doc_url: https://huggingface.co/docs/hub/xet/index#using-xet-storage
   dev_url: https://github.com/huggingface/xet-core
 
 extra:
