@@ -31,8 +31,8 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - {{ stdlib('c') }}
+    - {{ compiler('c') }}  # [not win]
+    - {{ stdlib('c') }}  # [not win]
     - {{ compiler('rust') }}
     - cargo-bundle-licenses
     - pkg-config
