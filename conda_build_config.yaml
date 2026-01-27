@@ -1,5 +1,7 @@
-# Pin VS 2019 C compiler matching rust compiler on Windows
-c_compiler_version:   # [win]
-  - "14.29"           # [win]
-cxx_compiler_version: # [win]
-  - "14.29"           # [win]
+# On Windows, Pin VS C/C++ and rust compiler toolchain version to match - VS2019.
+rust_compiler_version:  # [win]
+  - 1.89                # [win]
+c_compiler_version:     # [win]
+  - 14.29               # [win]
+cxx_compiler_version:   # [win]
+  - 14.29               # [win]
