@@ -31,9 +31,11 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}  # [not win]
-    - {{ stdlib('c') }}  # [not win]
+    - {{ compiler('c') }}
+    - {{ stdlib('c') }}
     - {{ compiler('rust') }}
+    # pin VS toolchains version to 2019 for matching C and rust compiler versions
+    - vs2019_win-64  # [win]
     - cargo-bundle-licenses
     - pkg-config
     - openssl {{ openssl }}
