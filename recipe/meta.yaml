@@ -41,6 +41,7 @@ requirements:
     - maturin >=1.7,<2.0
   run:
     - python
+    - {{ stdlib('c') }}
 
 test:
   source_files:
