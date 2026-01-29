@@ -1,17 +1,17 @@
 {% set name = "hf-xet" %}
-{% set version = "1.1.8" %}
+{% set version = "1.2.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/h/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
-  sha256: 62a0043e441753bbc446dcb5a3fe40a4d03f5fb9f13589ef1df9ab19252beb53
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name|replace('-', '_') }}-{{ version }}.tar.gz
+  sha256: a8c27070ca547293b6890c4bf389f713f80e8c478631432962bb7f4bc0bd7d7f
 
 build:
   number: 0
-  skip: True  # [py<38]
+  skip: true  # [py<38]
   script:
     # Optimize the Cargo build
     - export CARGO_PROFILE_RELEASE_STRIP=symbols  # [unix]
@@ -22,14 +22,13 @@ build:
     - export OPENSSL_DIR="$PREFIX"  # [unix]
     - set OPENSSL_DIR=%LIBRARY_PREFIX%  # [win]
     - {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
-    # Generate the THIRDPARTY.yml file
-    - cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml  # [unix]
-    - cargo-bundle-licenses --format yaml --output %SRC_DIR%\THIRDPARTY.yml  # [win]
+    # Generate the THIRDPARTY.yml file for hf_xet and it's dependencies (additional unused workspace members
+    # not included in the pypi tarball are present).
+    - cd hf_xet && cargo-bundle-licenses --format yaml --output ${SRC_DIR}/THIRDPARTY.yml  # [unix]
+    - cd hf_xet && cargo-bundle-licenses --format yaml --output %SRC_DIR%\THIRDPARTY.yml  # [win]
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - {{ stdlib('c') }}
     - {{ compiler('rust') }}
     - cargo-bundle-licenses
     - pkg-config
@@ -40,6 +39,7 @@ requirements:
     - maturin >=1.7,<2.0
   run:
     - python
+    - libgcc  # [linux]
 
 test:
   source_files:
@@ -68,9 +68,9 @@ about:
   license: Apache-2.0
   license_family: Apache
   license_file: 
-    - LICENSE
+    - hf_xet/LICENSE
     - THIRDPARTY.yml
-  doc_url: https://github.com/huggingface/xet-core/blob/main/README.md
+  doc_url: https://huggingface.co/docs/hub/xet/index#using-xet-storage
   dev_url: https://github.com/huggingface/xet-core
 
 extra:
