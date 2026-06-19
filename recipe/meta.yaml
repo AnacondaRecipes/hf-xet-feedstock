@@ -30,6 +30,7 @@ build:
 requirements:
   build:
     - {{ compiler('rust') }}
+    - {{ stdlib('c') }}
     - cargo-bundle-licenses
     - pkg-config
     - openssl {{ openssl }}
@@ -39,11 +40,8 @@ requirements:
     - maturin >=1.7,<2.0
   run:
     - python
-    - libgcc  # [linux]
 
 test:
-  source_files:
-    - data
   imports:
     - hf_xet
   commands:
