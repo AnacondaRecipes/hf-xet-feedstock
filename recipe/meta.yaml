@@ -30,6 +30,7 @@ build:
 requirements:
   build:
     - {{ compiler('rust') }}
+    - {{ compiler('c') }}
     - {{ stdlib('c') }}
     - cargo-bundle-licenses
     - pkg-config
@@ -55,7 +56,7 @@ test:
 about:
   home: https://github.com/huggingface/xet-core
   summary: xet-core enables huggingface_hub to utilize xet storage for uploading and downloading to HF Hub.
-  description: 
+  description: |
     xet-core enables huggingface_hub to utilize xet storage for uploading and
     downloading to HF Hub. Xet storage provides chunk-based deduplication,
     efficient storage/retrieval with local disk caching, and backwards
