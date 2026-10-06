@@ -10,7 +10,7 @@ source:
   sha256: 2e58454a340b3556dfa4972d5451aff4fba8dd42a236600ba1a1d2b1514f0fef
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<38]
   script:
     # Optimize the Cargo build
